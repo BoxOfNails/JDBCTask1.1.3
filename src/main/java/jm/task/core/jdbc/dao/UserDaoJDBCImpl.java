@@ -3,7 +3,11 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class UserDaoJDBCImpl implements UserDao {
         Statement dbSt = null;
         try {
             dbLink = Util.getInstance().connectToDb();
+            dbLink.setAutoCommit(false);
             try {
                 dbSt = dbLink.createStatement();
                 dbSt.executeUpdate("CREATE TABLE IF NOT EXISTS usersTable (" +
@@ -25,8 +30,10 @@ public class UserDaoJDBCImpl implements UserDao {
                         "lastname VARCHAR(25)," +
                         "age TINYINT," +
                         "PRIMARY KEY (id))");
+                dbLink.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
+                dbLink.rollback();
             } finally {
                 if(dbSt != null) {
                     dbSt.close();
@@ -50,11 +57,14 @@ public class UserDaoJDBCImpl implements UserDao {
         Statement dbSt = null;
         try {
             dbLink = Util.getInstance().connectToDb();
+            dbLink.setAutoCommit(false);
             try {
                 dbSt = dbLink.createStatement();
                 dbSt.executeUpdate("DROP TABLE IF EXISTS usersTable");
+                dbLink.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
+                dbLink.rollback();
             } finally {
                 if(dbSt != null) {
                     dbSt.close();
@@ -118,12 +128,15 @@ public class UserDaoJDBCImpl implements UserDao {
         Statement dbSt = null;
         try {
             dbLink = Util.getInstance().connectToDb();
+            dbLink.setAutoCommit(false);
             try {
                 dbSt = dbLink.createStatement();
                 dbSt.executeUpdate("DELETE FROM usersTable " +
                         "WHERE id=" + id);
+                dbLink.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
+                dbLink.rollback();
             } finally {
                 if(dbSt != null) {
                     dbSt.close();
@@ -191,11 +204,14 @@ public class UserDaoJDBCImpl implements UserDao {
         Statement dbSt = null;
         try {
             dbLink = Util.getInstance().connectToDb();
+            dbLink.setAutoCommit(false);
             try {
                 dbSt = dbLink.createStatement();
                 dbSt.executeUpdate("TRUNCATE TABLE usersTable");
+                dbLink.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
+                dbLink.rollback();
             } finally {
                 if(dbSt != null) {
                     dbSt.close();
